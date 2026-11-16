@@ -37,7 +37,14 @@ public:
         SDL_RenderFillRect(renderer, &rect);
     }
 
-    SDL_Point to_screen(float x, float y, float scale = 200.0f) {
+    SDL_Point to_screen(float x, float y, float scale = 70.0f) {
         return { (int)(x * scale) + width / 2, (int)(-y * scale) + height / 2 };
+    }
+
+    int get_width() const {
+        return width;
+    }
+    int get_height() const {
+        return height;
     }
 };
