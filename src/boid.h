@@ -1,17 +1,38 @@
 #pragma once
 
 #include <SDL.h>
+#include <cmath>
+#include "vector.h"
 
 class boid {
-private:
-    SDL_Point a, b, c;
 public:
-    boid(SDL_Point a, SDL_Point b, SDL_Point c) : a(a), b(b), c(c) {}
+    vec2 pos;
+    vec2 dir;   //unit vector the way the triangle points
 
-    void draw(SDL_Renderer* renderer) const {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
-        SDL_RenderDrawLine(renderer, b.x, b.y, c.x, c.y);
-        SDL_RenderDrawLine(renderer, c.x, c.y, a.x, a.y);
+    boid(vec2 pos, float angle) : pos(pos), dir{ std::cos(angle), std::sin(angle) } {}
+
+    void draw(Renderer& r) const {
+        const float s = 0.1f;
+
+        //perpendicular to dir
+        vec2 side{ -dir.y(), dir.x() };
+
+        auto to_world = [&](float fwd, float lat) {
+            return vec2{ pos.x() + dir.x() * fwd + side.x() * lat,
+                         pos.y() + dir.y() * fwd + side.y() * lat };
+        };
+
+        vec2 a = to_world( 2 * s,  0);
+        vec2 b = to_world(-s,      s);
+        vec2 c = to_world(-s,     -s);
+
+        SDL_Point pa = r.to_screen(a.x(), a.y());
+        SDL_Point pb = r.to_screen(b.x(), b.y());
+        SDL_Point pc = r.to_screen(c.x(), c.y());
+
+        SDL_SetRenderDrawColor(r.renderer, 255, 255, 255, 255);
+        SDL_RenderDrawLine(r.renderer, pa.x, pa.y, pb.x, pb.y);
+        SDL_RenderDrawLine(r.renderer, pb.x, pb.y, pc.x, pc.y);
+        SDL_RenderDrawLine(r.renderer, pc.x, pc.y, pa.x, pa.y);
     }
 };
