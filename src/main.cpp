@@ -34,12 +34,15 @@ int main() {
             float dt = (now-last) / 1000.0f;
             last = now;
             //update boids
-            for (auto& boid : boids) {
-                boid.update(dt, half_w, half_h);
-            }
             r.clear();
-            for (const auto& boid : boids) {
-                boid.draw(r);
+            std::vector<vec2> steers(boids.size());
+            for (size_t i = 0; i < boids.size(); i++) {
+                steers[i] = boids[i].alignment(boids);
+            }
+            for (size_t i = 0; i < boids.size(); i++)  {
+                boids[i].steer(steers[i], dt);
+                boids[i].update(dt, half_w, half_h);
+                boids[i].draw(r);
             }
             r.present();
             SDL_Delay(16); 
