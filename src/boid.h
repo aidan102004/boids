@@ -4,15 +4,17 @@
 #include <cmath>
 #include "vector.h"
 
+const float speed = 1.0f;
+
 class boid {
 public:
     vec2 pos;
     vec2 dir;   //unit vector the way the triangle points
 
-    boid(vec2 pos, float angle) : pos(pos), dir{ std::cos(angle), std::sin(angle) } {}
+    boid(vec2 pos, float angle) : pos(pos), dir{std::cos(angle), std::sin(angle)} {}
 
     void draw(Renderer& r) const {
-        const float s = 0.1f;
+        const float s = 0.05f;
 
         //perpendicular to dir
         vec2 side{ -dir.y(), dir.x() };
@@ -35,4 +37,10 @@ public:
         SDL_RenderDrawLine(r.renderer, pb.x, pb.y, pc.x, pc.y);
         SDL_RenderDrawLine(r.renderer, pc.x, pc.y, pa.x, pa.y);
     }
+
+    void update(float dt, float half_w, float half_h) {
+        float step = dt * speed;
+        pos = vec2({pos.x() + dir.x() * step, pos.y() + dir.y() * step});
+    }
+
 };
