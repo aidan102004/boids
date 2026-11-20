@@ -41,6 +41,13 @@ public:
     void update(float dt, float half_w, float half_h) {
         float step = dt * speed;
         pos = vec2({pos.x() + dir.x() * step, pos.y() + dir.y() * step});
+
+        //edge wrapping
+        if (pos.x() > half_w) pos = vec2({-half_w, pos.y()});
+        if (pos.x() < -half_w) pos = vec2({half_w, pos.y()});
+        if (pos.y() > half_h) pos = vec2({pos.x(), -half_h});
+        if (pos.y() < -half_h) pos = vec2({pos.x(), half_h});
+
     }
 
 };
